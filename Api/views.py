@@ -46,21 +46,21 @@ def update_student(request,id):
 
 @api_view(['PATCH'])
 def update_studentpartially(request,id):
-    # try:
-    studentobj = Student.objects.get(id=id)
-    
+    try:
+        studentobj = Student.objects.get(id=id)
+        
 
-    serializer = StudentSerializer(studentobj,data = request.data, partial=True)
+        serializer = StudentSerializer(studentobj,data = request.data, partial=True)
 
-    if not serializer.is_valid():
-        return Response({'status':403,'errors':serializer.errors,'message':'something went wrong'})
+        if not serializer.is_valid():
+            return Response({'status':403,'errors':serializer.errors,'message':'something went wrong'})
 
-    serializer.save()
-    return Response({'status':200,'data':serializer.data,'message':'your data is saved'})   
+        serializer.save()
+        return Response({'status':200,'data':serializer.data,'message':'your data is saved'})   
 
-    # except Exception as e:
-    #     print("e------------------------",e)
-    #     return Response({'status':403,'message':'invalid id'})
+    except Exception as e:
+        print("e------------------------",e)
+        return Response({'status':403,'message':'invalid id'})
 
 
 @api_view(['DELETE'])
@@ -74,3 +74,10 @@ def delete_student(request,id):
     except Exception as e:
         print("e------------------------",e)
         return Response({'status':403,'message':'invalid id'})
+
+
+@api_view(['GET'])
+def get_book(request):
+    book_obj  = Book.objects.all()
+    serializer = BookSerializer(book_obj,many=True).data
+    return Response({'status':200,'data':serializer})
