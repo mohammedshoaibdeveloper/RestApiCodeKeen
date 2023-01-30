@@ -94,9 +94,14 @@ def get_book(request):
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+################# jwt authorization #################
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 class StudentApi(APIView):
 
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -158,6 +163,9 @@ class StudentApi(APIView):
 
 ############################ Session Authentication #########################
 
+################ for jwt ###################################
+from rest_framework_simplejwt.tokens import RefreshToken
+
 class UserRegistration(APIView):
 
     def post(self,request):
@@ -169,6 +177,15 @@ class UserRegistration(APIView):
 
         serializer.save()
         user = User.objects.get(username = serializer.data['username'])
-        token_obj , _ = Token.objects.get_or_create(user=user)
+        # token_obj , _ = Token.objects.get_or_create(user=user)
 
-        return Response({'status':200,'data':serializer.data,'token_obj':str(token_obj),'message':'your data is saved'})
+        ################ for jwt ###################################
+        refresh = RefreshToken.for_user(user)
+
+        # return Response({'status':200,'data':serializer.data,'token_obj':str(token_obj),'message':'your data is saved'})
+
+        return Response({'status':200,
+        'data':serializer.data,
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+        'message':'your data is saved'})
