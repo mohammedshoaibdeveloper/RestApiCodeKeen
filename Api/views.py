@@ -7,6 +7,9 @@ from.serializers import *
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 
+
+
+
 ##################################### Decorators ##################################### 
 
 @api_view(['GET'])
@@ -189,3 +192,21 @@ class UserRegistration(APIView):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
         'message':'your data is saved'})
+
+
+
+############################ Generic Views  #########################
+
+from rest_framework import generics
+
+class StudentGeneric(generics.ListAPIView,generics.CreateAPIView):
+    
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+
+class StudentGeneric1(generics.UpdateAPIView,generics.DestroyAPIView):
+
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    lookup_field = 'id'

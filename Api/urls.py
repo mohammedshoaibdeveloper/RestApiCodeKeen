@@ -22,6 +22,11 @@ urlpatterns = [
 
     path('student/',StudentApi.as_view()),
     path('register/',UserRegistration.as_view()),
+
+    ############# genericView ########################
    
+    path('generic-student/',StudentGeneric.as_view()),
+    path('generic-student/<int:id>/',StudentGeneric1.as_view()),
+
   
 ]
