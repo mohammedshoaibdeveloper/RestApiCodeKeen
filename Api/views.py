@@ -6,6 +6,8 @@ from .models import *
 from.serializers import *
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
+import Api.faker as fake
+import Api.helper as pdf
 
 
 
@@ -210,3 +212,73 @@ class StudentGeneric1(generics.UpdateAPIView,generics.DestroyAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     lookup_field = 'id'
+
+
+@api_view(['GET'])
+def generatedata(request):
+
+    fake.generate_random_data()
+    return Response({'status':200})
+import datetime
+
+class GeneratePdf(APIView):
+    def get(self, request):
+
+        studentObj = Student.objects.all()
+        params = {
+            'today': datetime.datetime.today(),
+            'student_obj':studentObj
+        }
+        filename,status = pdf.save_pdf(params)
+        if not status:
+
+            return Response({'status':400})
+
+        return Response({'status':200,'path':f'/media/{filename}.pdf'})
+
+import pandas as pd
+from django.conf import settings
+import uuid
+
+class ExporImportExcel(APIView):
+
+    def get(self, request):
+        student_obj = Student.objects.all()
+        serializer = StudentSerializer(student_obj,many=True)
+
+        df = pd.DataFrame(serializer.data)
+        print(df)
+        df.to_csv(f"public/static/excel/{uuid.uuid4}.csv",encoding="UTF-8",index=False)
+        return Response({"status":200})
+
+    def post(self,request):
+
+        excel_upload_obj = Excelfileuupload.objects.create(excel_file_upload = request.FILES['files'])
+        df  = pd.read_csv(f"{settings.BASE_DIR}/public/static/{excel_upload_obj.excel_file_upload}")
+        for student in (df.values.tolist()):
+            print(student)
+
+
+        return Response({"status":200})
+
+
+
+class RegisterView(APIView):
+    
+    def post(self, request):
+
+        try:
+
+            serializer = CustomeUserSerializer(data = request.data)
+            if not serializer.is_valid():
+
+                return Response({"status":403,'errors':serializers.errors})
+
+            serializer.save()
+            return Response({"status":200,"message":"en email OTP  send on your number and email"})
+
+        
+        except Exception as e:
+
+            print(e)
+            return Response({'status':404,'errors':'something went wrong'})

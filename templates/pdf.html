@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>PDF</title>
+  </head>
+  <body>
+    <table class="table">
+        <thead>
+      <tr>
+        <th>S.no</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Address</th>
+        <th>Father Name</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for student in student_obj%}
+      <tr>
+        <th scope="row">{{forloop.counter}}</th>
+        <th class="text-center">{{student.name}}</th>
+        <th class="text-center">{{student.age}}</th>
+        <th class="text-center">{{student.address}}</th>
+        <th class="text-center">{{student.father_name}}</th>
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+  </body>
+</html>

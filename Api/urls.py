@@ -14,6 +14,7 @@ urlpatterns = [
 
 
     path('get_book',get_book),
+    path('generatedata',generatedata),
 
     ######################## decorrators #################################
 
@@ -27,6 +28,9 @@ urlpatterns = [
    
     path('generic-student/',StudentGeneric.as_view()),
     path('generic-student/<int:id>/',StudentGeneric1.as_view()),
+    path('pdf/',GeneratePdf.as_view()),
+    path('excel/',ExporImportExcel.as_view()),
+    path('userregister/',RegisterView.as_view()),
 
   
 ]
