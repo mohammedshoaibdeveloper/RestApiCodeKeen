@@ -56,6 +56,7 @@ class CategorySerializer(serializers.ModelSerializer):
 #         fields = '__all__'
 #         depth = 1
 
+from .helper import *
 
 class BookSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
@@ -75,4 +76,5 @@ class CustomeUserSerializer(serializers.ModelSerializer):
         user = User.objects.create(email = validated_data['email'],phone = validated_data['phone'])
         user.set_password(validated_data['password'])
         user.save()
+        send_otp_mobile(user.phone,user)
         return user

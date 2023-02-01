@@ -7,7 +7,7 @@ from.serializers import *
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 import Api.faker as fake
-import Api.helper as pdf
+from Api.helper import *
 
 
 
@@ -280,5 +280,43 @@ class RegisterView(APIView):
         
         except Exception as e:
 
+            print(e)
+            return Response({'status':404,'errors':'something went wrong'})
+
+
+class VerifyOtp(APIView):
+
+    def post(self, request):
+        try:
+            data  = request.data
+            user_obj = User.objects.get(phone = data.get('phone'))
+            otp = data.get('otp')
+            if user_obj.otp == otp:
+                user_obj.is_phone_verified = True
+                user_obj.save()
+                return Response({"status":200,"message":"your otp is verified"})
+
+            return Response({"status":403,"message":"your otp is wrong"})
+        except Exception as e:
+            print(e)
+            return Response({'status':404,'errors':'something went wrong'})
+
+    
+    def patch(self, request):
+
+        try:
+            data  = request.data
+            user_obj = User.objects.filter(phone = data.get('phone'))
+
+            if not user_obj.exists():
+                return Response({'status':404,'errors':'no user found!'})
+
+            status,time = send_otp_mobile(data.get('phone'),user_obj[0])
+            if status:
+                return Response({'status':200,'message':'new otp sent'})
+
+            return Response({'status':404,'errors':f'try after few seconds {time}'})
+
+        except Exception as e:
             print(e)
             return Response({'status':404,'errors':'something went wrong'})

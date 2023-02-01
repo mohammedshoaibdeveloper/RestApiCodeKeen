@@ -31,6 +31,7 @@ urlpatterns = [
     path('pdf/',GeneratePdf.as_view()),
     path('excel/',ExporImportExcel.as_view()),
     path('userregister/',RegisterView.as_view()),
+    path('verify-otp/',VerifyOtp.as_view()),
 
   
 ]
